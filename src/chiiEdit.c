@@ -17,25 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static void initEditor(void)
-{
-    E.cx = 0;
-    E.cy = 0;
-    E.rx = 0;
-    E.offsetY = 0;
-    E.offsetX = 0;
-    E.numRows = 0;
-    E.row = NULL;
-    E.dirty = 0;
-    E.fileName = NULL;
-    E.statusMsg[0] = '\0';
-    E.statusMsgTime = 0;
-    if (getWindowSize(&E.screenY, &E.screenX) == -1) {
-        perror("getWindowSize");
-        exit(EXIT_FAILURE);
-    }
-    E.screenY -= 2;
-}
+void initEditor(void);
 
 int main(int argc, char *argv[])
 {

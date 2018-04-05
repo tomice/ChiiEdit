@@ -60,6 +60,7 @@ typedef struct editorConfig {
     struct termios orig_termios;
 } editorConfig;
 
+/* FIXME: Remove this global */
 editorConfig E;
 
 #endif /* GLOBAL_H */
