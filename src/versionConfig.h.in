@@ -1,0 +1,5 @@
+#define SW_VERSION @VERSION@
+#define GIT_COMMIT @GIT_COMMIT@
+#define GIT_URL    @GIT_URL@
+#define GIT_BRANCH @GIT_BRANCH@
+#define BUILD_TAG  @BUILD_TAG@

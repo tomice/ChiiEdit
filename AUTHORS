@@ -1,0 +1,17 @@
+Authors of ChiiEdit
+
+ChiiEdit was created by Tom Ice <contact@thomasice.com>
+
+A big THANK YOU goes to:
+    Salvatore Sanfilippo <antires@gmail.com>
+    * Original creator of the 1000 LoC text editor written in C
+
+    Jeremy Ruten <jeremy.ruten@gmail.com>
+    * Creator of the step-by-step guide to building your own text editor
+      which can be found at https://viewsourcecode.org/snaptoken/kilo/
+
+    Glen Cornell <glen.m.cornell@gmail.com>
+    * Creator of original implementation of how cmdline args, version numbers,
+      and embedded info are processed in this application, as well as my
+      overall embedded development and board support mentor
+

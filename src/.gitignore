@@ -1,0 +1,6 @@
+Makefile
+Makefile.in
+ChiiEdit
+.deps
+versionConfig.h
+*.o
