@@ -30,12 +30,12 @@ char *editorPrompt(char *prompt, void (*callback)(char *, int))
         /* FIXME: Confirm that c is never larger than it should be
                   before trying to process the key */
         c = editorReadKey();
-        if (c == DEL_KEY || c == CTRL_KEY('h') || c == BACKSPACE) {
+        if (c == DEL_KEY || c == CTRL_H || c == BACKSPACE) {
             if (bufLen != 0) {
                 buf[--bufLen] = '\0';
             }
         }
-        else if (c == '\x1b') {
+        else if (c == ESC) {
             editorSetStatusMessage("");
             if (callback) {
                 callback(buf, c);
@@ -43,7 +43,7 @@ char *editorPrompt(char *prompt, void (*callback)(char *, int))
             free(buf);
             return NULL;
         }
-        else if (c == '\r') {
+        else if (c == CARRIAGE_RET) {
             if (bufLen != 0) {
                 editorSetStatusMessage("");
                 if (callback) {
@@ -113,14 +113,14 @@ void editorProcessKeypress(void)
     static int quitTimes = CHII_QUIT_TIMES;
     int c = editorReadKey();
     int times;
-    /* FIXME: Add carriage returns and whatnot to EditorKey to be consistent */
+
     switch (c) {
-        /* Terminal enter */
-        case '\r':
+        /* Enter */
+        case CARRIAGE_RET:
             editorInsertNewline();
             break;
         /* Quit */
-        case CTRL_KEY('q'):
+        case CTRL_Q:
             if (E.dirty && quitTimes > 0) {
                 editorSetStatusMessage("WARNING: File has unsaved changes. "
                                        "Press [Ctrl-Q] %d more times to quit.",
@@ -128,13 +128,18 @@ void editorProcessKeypress(void)
                 quitTimes--;
                 return;
             }
-            /* FIXME: Take a closer look at this later... */
-            write(STDOUT_FILENO, CURSOR_ERASE_ALL_IN_DISPLAY, 4);
-            write(STDOUT_FILENO, CURSOR_HORIZONTAL_TAB_SET, 3);
+            if (write(STDOUT_FILENO, CURSOR_ERASE_ALL_IN_DISPLAY, 4) != 4) {
+                perror("write()");
+                exit(EXIT_FAILURE);
+            }
+            if (write(STDOUT_FILENO, CURSOR_HORIZONTAL_TAB_SET, 3) != 3) {
+                perror("write()");
+                exit(EXIT_FAILURE);
+            }
             exit(0);
             break;
         /* Save */
-        case CTRL_KEY('s'):
+        case CTRL_S:
             editorSave();
             break;
         case HOME_KEY:
@@ -146,12 +151,11 @@ void editorProcessKeypress(void)
             }
             break;
         /* Find */
-        case CTRL_KEY('f'):
+        case CTRL_F:
             editorFind();
             break;
         case BACKSPACE:
-        /* Terminal old school delete */
-        case CTRL_KEY('h'):
+        case CTRL_H:
         case DEL_KEY:
             if (c == DEL_KEY) { editorMoveCursor(ARROW_RIGHT); }
             editorDelChar();
@@ -179,8 +183,8 @@ void editorProcessKeypress(void)
             editorMoveCursor(c);
             break;
         /* Terminal refresh */
-        case CTRL_KEY('l'):
-        case '\x1b':
+        case FORMFEED:
+        case ESC:
             break;
         default:
             editorInsertChar(c);

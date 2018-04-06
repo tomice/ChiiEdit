@@ -28,6 +28,7 @@ void enableRawMode(void)
     atexit(disableRawMode);
     raw = E.orig_termios;
     /* Disable a bunch of terminal signal processing */
+    /* http://man7.org/linux/man-pages/man3/termios.3.html */
     raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
     raw.c_oflag &= ~(OPOST);
     raw.c_cflag |= (CS8);
@@ -41,6 +42,7 @@ void enableRawMode(void)
     }
 }
 
+/* Reading keys when terminal is in raw mode */
 int editorReadKey(void)
 {
     int nread;
@@ -54,13 +56,13 @@ int editorReadKey(void)
         }
     }
     /* ASCII escape is hex 1B */
-    if (c == '\x1b') {
-        if (read(STDIN_FILENO, &seq[0], 1) != 1) { return '\x1b'; }
-        if (read(STDIN_FILENO, &seq[1], 1) != 1) { return '\x1b'; }
+    if (c == ESC) {
+        if (read(STDIN_FILENO, &seq[0], 1) != 1) { return ESC; }
+        if (read(STDIN_FILENO, &seq[1], 1) != 1) { return ESC; }
 
         if (seq[0] == '[') {
             if (seq[1] >= '0' && seq[1] <= '9') {
-                if (read(STDIN_FILENO, &seq[2], 1) != 1) { return '\x1b'; }
+                if (read(STDIN_FILENO, &seq[2], 1) != 1) { return ESC; }
                 if (seq[2] == '~') {
                     switch (seq[1]) {
                         case '1': return HOME_KEY;
@@ -90,7 +92,7 @@ int editorReadKey(void)
                 case 'F': return END_KEY;
             }
         }
-        return '\x1b';
+        return ESC;
     }
     else {
         return c;
@@ -117,10 +119,10 @@ int getCursorPosition(int *rows, int *cols)
     }
     buf[i] = '\0';
     /* Don't store char sequences that would be interpreted poorly */
-    if (buf[0] != '\x1b' || buf[1] != '[') {
+    if (buf[0] != ESC || buf[1] != '[') {
         return -1;
     }
-    /* */
+    /* Parse cursor position */
     if (sscanf(&buf[2], "%d;%d", rows, cols) != 2) {
         return -1;
     }

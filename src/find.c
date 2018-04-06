@@ -14,7 +14,7 @@ void editorFindCallback(char *query, int key)
     int current;
     erow *row;
 
-    if (key == '\r' || key == '\x1b') {
+    if (key == CARRIAGE_RET || key == ESC) {
         lastMatch = -1;
         direction = 1;
         return;

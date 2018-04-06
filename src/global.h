@@ -4,11 +4,11 @@
 #include <time.h>
 #include <termios.h>
 
-/* defines */
 #define CHII_AUTHOR "Tom Ice"
+
+/* TODO: Break some of these out and editable via config file */
 #define CHII_TAB_STOP 8
 #define CHII_QUIT_TIMES 3
-#define CTRL_KEY(k) ((k) & 0x1f)
 
 /* VT100 Escape Sequences */
 /* More info here: https://vt100.net/docs/vt100-ug/chapter3.html */
@@ -23,7 +23,25 @@
 #define CURSOR_SELECT_GRAPHIC_REND "\x1b[m"
 #define CURSOR_INVERT_COLORS "\x1b[7m"
 
+/* Standard ASCII  in Decimal */
+/* http://man7.org/linux/man-pages/man7/ascii.7.html */
 enum EditorKey {
+    NUL = 0,
+    CTRL_C = 3,
+    CTRL_D,
+    CTRL_E,
+    CTRL_F,
+    CTRL_G,
+    CTRL_H,
+    H_TAB,
+    NEWLINE,
+    V_TAB,
+    FORMFEED,
+    CARRIAGE_RET,
+    CTRL_Q = 17,
+    CTRL_R,
+    CTRL_S,
+    ESC = 27,
     BACKSPACE = 127,
     ARROW_LEFT = 1000,
     ARROW_RIGHT,
@@ -60,7 +78,7 @@ typedef struct editorConfig {
     struct termios orig_termios;
 } editorConfig;
 
-/* FIXME: Remove this global */
+/* TODO: Refactor this global */
 editorConfig E;
 
 #endif /* GLOBAL_H */

@@ -25,7 +25,7 @@ int editorRowRxToCx(erow *row, int rx)
     int i;
 
     for (i = 0; i < row->size; i++) {
-        if (row->chars[i] == '\t') {
+        if (row->chars[i] == H_TAB) {
             cur_rx += (CHII_TAB_STOP - 1) - (cur_rx % CHII_TAB_STOP);
         }
         cur_rx++;
@@ -44,7 +44,7 @@ void editorUpdateRow(erow *row)
     int j = 0;
 
     for (int i = 0; i < row->size; i++) {
-        if (row->chars[i] == '\t') {
+        if (row->chars[i] == H_TAB) {
             tabs++;
         }
     }
@@ -56,7 +56,7 @@ void editorUpdateRow(erow *row)
         exit(EXIT_FAILURE);
     }
     for (int i = 0; i < row->size; i++) {
-        if (row->chars[i] == '\t') {
+        if (row->chars[i] == H_TAB) {
             row->render[j++] = ' ';
             while (j % CHII_TAB_STOP != 0) {
                 row->render[j++] = ' ';
