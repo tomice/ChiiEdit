@@ -9,7 +9,7 @@
 ################################################################################
 # GLOBAL VARIABLES:
 
-TOP=$( cd "$(dirname "$0")" || exit ; pwd -P)
+TOP=$(cd "$(dirname "$0")" || exit ; pwd -P)
 CONFIG_PATH="/home/${USER}/usr/local"
 INSTALL_PATH="${CONFIG_PATH}/bin"
 PROGRAM="ChiiEdit"
@@ -25,8 +25,8 @@ DATE=$(date +%Y%m%d%H%M)
 BUILD_TAG="${USER}-${DATE}"
 
 # Redirect stdout and stderr to a log file while also displaying all info
-exec &> >(tee -ia "${TOP}"/"${PROGRAM}"_"${DATE}".log)
-LOG_FILE="${TOP}/${PROGRAM}_${DATE}.log"
+exec &> >(tee -ia "${TOP}"/logs/"${PROGRAM}"_"${DATE}".log)
+LOG_FILE="${TOP}/logs/${PROGRAM}_${DATE}.log"
 
 ################################################################################
 # LOCAL FUNCTION: usage()
@@ -49,7 +49,7 @@ DESCRIPTION
 OPTIONS
         -v|--verbose
              Show additional information during a build
-        -?|-h|--help
+        -h|--help
              Display this help information and exit
         -d|--dry-run
              Print the commands that would be executed
@@ -68,7 +68,6 @@ clean_up () {
   cd "${TOP}" || exit
 
   [[ -d "${TOP}"/autom4te.cache ]] && make maintainer-clean
-  [[ -d "${TOP}"/logs ]] && rm -rf "${TOP}"/logs
   [[ -d "${TOP}"/m4 ]] && rm -rf "${TOP}"/m4
   [[ -f "${TOP}"/aminclude_static.am ]] && rm "${TOP}"/aminclude_static.am
   [[ -f "${TOP}"/src/"${PROGRAM}" ]] && rm "${TOP}"/src/"${PROGRAM}"
@@ -118,21 +117,27 @@ verify_build () {
 ################################################################################
 # MAIN PROGRAM: SETUP
 
-while [[ "${1}" == -* ]]; do
+# Parse the command line arguments using GNU getopt:
+if ! OPTIONS=$(getopt -o hvd -l help,verbose,dry-run -- "${@}"); then
+  echo "ERROR: GNU getopt error"
+  exit 1
+fi
+
+eval set -- "${OPTIONS}"
+
+# Never process more than one flag
+[[ "${#}" -gt 2 ]] && { echo "ERROR: Too many parameters"; exit 1; }
+
+while [[ "${#}" -gt 0 ]]; do
   case "${1}" in
-    -h|--help|-\?) usage; exit 0;;
+    -h|--help) usage; exit 0;;
     -v|--verbose) VERBOSE=1; shift;;
     -d|--dry-run) DRY_RUN=1; shift;;
     --) shift; break;;
-    -*) echo "ERROR: invalid option: ${1}" 1>&2; usage; exit 1;;
+    -*) echo "ERROR: Invalid option: ${1}" 1>&2; usage; exit 1;;
+     *) break;;
   esac
 done
-
-# Process the remaining arguments:
-case "${#}" in
-  0) /bin/true;;
-  *) echo "ERROR: Invalid # of parameters" 1>&2; usage; clean_up; exit 1;;
-esac
 
 # Don't build if there's no configure.ac
 if [[ ! -f "${TOP}"/configure.ac ]]; then
