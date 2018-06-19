@@ -16,17 +16,29 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 void initEditor(void);
 
 int main(int argc, char *argv[])
 {
     globalVars_t *glob = processCommandLineArgs(argc, argv);
+    FILE *fp;
 
     enableRawMode();
     initEditor();
     if (argc >= 2) {
-        editorOpen(argv[1]);
+        if (access(argv[1], F_OK) != -1) {
+            editorOpen(argv[1]);
+        }
+        else {
+            fp=fopen(argv[1], "w");
+            if (fp == NULL) {
+                perror("fopen()");
+            }
+            fclose(fp);
+            editorOpen(argv[1]);
+        }
     }
     editorSetStatusMessage("[Ctrl-S] Save | [Ctrl-F] Find | [Ctrl-Q] Quit");
 
