@@ -1,9 +1,9 @@
 # ChiiEdit
-
 ChiiEdit is a basic text editor written in C without relying on any libraries.
 
-## Installation
+![demo](https://user-images.githubusercontent.com/8818630/41635712-3f6ba3c2-7418-11e8-991e-061f13b14764.gif)
 
+## Installation
 To install locally into ~/usr/local/bin:
 
 ```bash
@@ -26,10 +26,16 @@ make install
 ```
 
 ## Usage
-
 ChiiEdit can be executed by itself to start creating a file from scratch.
-To modify a file, simply pass it a file you'd like to modify:
+
+To modify a file, or create a new one, simply pass it a filename:
 
 ```bash
 ChiiEdit foo.txt
 ```
+
+## Author
+Written by Tom Ice.
+
+## License
+This is under the MIT License. See actual license file for more information.
