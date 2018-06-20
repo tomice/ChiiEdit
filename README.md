@@ -38,4 +38,4 @@ ChiiEdit foo.txt
 Written by Tom Ice.
 
 ## License
-This is under the MIT License. See actual license file for more information.
+This is under the BSD-2 License. See actual license file for more information.
